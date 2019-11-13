@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            #map {
+                height: 400px;
+                width: 100%;
+            }
+        </style>
+        <link rel="stylesheet" href="/static/css/bulma.css" type="text/css" media="screen" title="Bulma" charset="utf-8">
+        <title>MapThingy</title>
+        <script src="/static/js/lodash.min.js" charset="utf-8"></script>
+        <script src="/static/js/zepto.min.js" charset="utf-8"></script>
+        <script src="/static/js/api.js" charset="utf-8"></script>
+        <script>
+            var markers = [];
+            var map;
+
+            function posFromApi(pos) {
+                return {
+                    lat: pos.latitude,
+                    lng: pos.longitude
+                }
+            }
+
+            function showMarker(map, pos, title) {
+                var marker = new google.maps.Marker({
+                    position: pos,
+                    map: map,
+                    draggable: true,
+                    title: title
+                });
+                markers.push(marker);
+            }
+
+            function initMap() {
+                map = new google.maps.Map(document.getElementById('map'), {
+                    center: { lat: 37.7749, lng: -122.4194 }, // San Francisco
+                    zoom: 4
+                });
+
+                API.start("localhost:8888/wsapi/", function() {
+                    console.log("Ready to map stuff!");
+                }, function(position, title) {
+                    showMarker(map, posFromApi(position), title);
+                });
+            }
+
+            function clearMap() {
+                _.each(markers, function (e) {
+                    e.setMap(null);
+                });
+
+                markers = [];
+            }
+
+            function findOne() {
+                API.getHostPosition($("#input-one").val());
+            }
+
+            function findAll() {
+                API.getHostPositionsAsync($("#input-one").val());
+            }
+        </script>
+    </head>
+    <body>
+        <h1>IP Mapper</h1>
+        <div class="section" id="map"></div>
+        <div class="section">
+            <div class="container">
+                <div class="field">
+                    <label class="label">Where is it?</label>
+                    <div class="field is-grouped">
+                        <div class="control is-expanded">
+                            <input class="input" id="input-one" type="text" placeholder="IP address or hostname">
+                        </div>
+                        <div class="control">
+                            <button onclick="findOne()" class="button is-link" id="find-one">Find</button>
+                        </div>
+                        <div class="control">
+                            <button onclick="findAll()" class="button is-link" id="find-all">Find All</button>
+                        </div>
+                        <div class="control">
+                            <button onclick="clearMap()" class="button is-link" id="find-many">Clear Map</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+    <script src="https://maps.googleapis.com/maps/api/js?key={{google_maps_key}}&callback=initMap"></script>
+</html>
