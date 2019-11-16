@@ -8,6 +8,7 @@ import re
 from functools import partial
 
 
+
 ROOT = os.path.abspath(os.path.dirname(__file__))
 TEMPLATE_DIR = os.path.join(ROOT, 'templates')
 STATIC_DIR = os.path.join(ROOT, 'static')
@@ -23,7 +24,10 @@ class APIHandler(tornado.websocket.WebSocketHandler):
         Should return True if the value is a string ending
         in a period, followed by a number of letters.
         """
-        return re.match('[a-zA-Z0-9\.\/\?\:@\-_=#]+\.([a-zA-Z]){2,6}([a-zA-Z0-9\.\&\/\?\:@\-_=#])*', s)
+        regex = re.compile(
+            r'(?:[A-Z](?:[A-Z]{0,61}[A-Z])?\.)+(?:[A-Z]{2,6}\.?|[A-Z0-9-]{2,}\.?)', re.IGNORECASE)
+
+        return len(re.findall(regex, s)) > 0
 
     async def process_message(self, message):
         msg = json.loads(message)
