@@ -8,7 +8,6 @@ import re
 from functools import partial
 
 
-
 ROOT = os.path.abspath(os.path.dirname(__file__))
 TEMPLATE_DIR = os.path.join(ROOT, 'templates')
 STATIC_DIR = os.path.join(ROOT, 'static')
@@ -60,7 +59,7 @@ class APIHandler(tornado.websocket.WebSocketHandler):
         self.write_message({
             'msg': 'position',
             'payload': res.body.decode('utf-8'),
-            'title': host_or_ip
+            'title': host_or_ip,
         })
 
     def get_positions_seq(self, hosts_or_ips):
@@ -71,7 +70,7 @@ class APIHandler(tornado.websocket.WebSocketHandler):
         self.write_message({
             'msg': 'position',
             'payload': res.body.decode('utf-8'),
-            'filter': host_or_ip
+            'title': host_or_ip
         })
 
     async def get_positions_async(self, hosts_or_ips):

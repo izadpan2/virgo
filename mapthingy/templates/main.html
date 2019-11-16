@@ -24,11 +24,18 @@
             }
 
             function showMarker(map, pos, title) {
+
+                var image = {
+                    url: 'https://'+title+'/favicon.ico'
+                };
+
                 var marker = new google.maps.Marker({
                     position: pos,
                     map: map,
                     draggable: true,
-                    title: title
+                    title: title,
+                    icon: image,
+
                 });
                 markers.push(marker);
             }
